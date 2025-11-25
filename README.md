@@ -15,3 +15,4 @@ For a more detailed understanding of what each demo does, you should read the so
 - alpha: Two quads moving around the screen. Pressing buttons on the controller changes either the blending
   mode, the blending factors or the background color of the scene.
 - indirect: Simplest indirect texture stage usage.
+- texgen-post-transform: Simple texgen post transformation matrix usage.
