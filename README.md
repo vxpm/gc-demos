@@ -14,3 +14,4 @@ For a more detailed understanding of what each demo does, you should read the so
 - light-spotlight: A rotating teapot with three spotlights (red, green and blue) rotating around it.
 - alpha: Two quads moving around the screen. Pressing buttons on the controller changes either the blending
   mode, the blending factors or the background color of the scene.
+- indirect: Simplest indirect texture stage usage.
