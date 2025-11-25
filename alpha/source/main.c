@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
 
     u32 fb = 0; // initial framebuffer index
 
-    u8 blend_modes[] = {GX_BM_BLEND, GX_BM_SUBTRACT};
+    u8 blend_modes[] = {GX_BM_BLEND, GX_BM_SUBTRACT, GX_BM_NONE};
     u8 blend_factors[] = {GX_BL_ZERO,      GX_BL_ONE,        GX_BL_SRCCLR,
                           GX_BL_INVSRCCLR, GX_BL_SRCALPHA,   GX_BL_INVSRCALPHA,
                           GX_BL_DSTALPHA,  GX_BL_INVDSTALPHA};
