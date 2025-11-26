@@ -16,3 +16,5 @@ For a more detailed understanding of what each demo does, you should read the so
   mode, the blending factors or the background color of the scene.
 - indirect: Simplest indirect texture stage usage.
 - texgen-post-transform: Simple texgen post transformation matrix usage.
+- copy-to-texture: Rotating cube which displays another rotating cube on it's faces. First it renders
+  the inner rotating cube to a texture, then draws the outer cube using the texture on it's faces.
