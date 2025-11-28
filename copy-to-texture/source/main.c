@@ -295,11 +295,41 @@ int main(int argc, char** argv) {
     guVector axis_a = {1, 1, 1};
     guVector axis_b = {-1, 1, -1};
 
-    u8* rendered_texture = aligned_alloc(32, 2 * 256 * 256);
+    u8* rendered_texture = aligned_alloc(32, 4 * 256 * 256);
     f32 rquad = 0.0f;
+
+    u8 formats[] = {GX_TF_RGBA8, GX_TF_RGB565, GX_TF_RGB5A3, GX_TF_I8};
+    s8 current_format = 0;
+    s16 tex_side = 128;
+
     while (1) {
+        PAD_ScanPads();
+
+        u16 buttons_down = PAD_ButtonsDown(0);
+        u16 buttons_held = PAD_ButtonsHeld(0);
+        if (buttons_down & PAD_BUTTON_X) {
+            if (++current_format > 3) {
+                current_format = 0;
+            }
+        }
+        if (buttons_down & PAD_BUTTON_Y) {
+            if (current_format-- == 0) {
+                current_format = 3;
+            }
+        }
+        if (buttons_held & PAD_BUTTON_A) {
+            if (++tex_side > 256) {
+                tex_side = 1;
+            }
+        }
+        if (buttons_held & PAD_BUTTON_B) {
+            if (tex_side-- == 0) {
+                tex_side = 256;
+            }
+        }
+
         // 01. draw colored cube
-        GX_SetViewport(0, 0, 256, 256, 0, 1);
+        GX_SetViewport(0, 0, tex_side, tex_side, 0, 1);
 
         guMtxIdentity(model);
         guMtxRotAxisDeg(model, &axis_a, 10 * rquad);
@@ -312,15 +342,15 @@ int main(int argc, char** argv) {
 
         // 02. copy it as a texture to main memory
         GX_SetCopyClear(white_background, zclear);
-        GX_SetTexCopySrc(0, 0, 256, 256);
-        GX_SetTexCopyDst(256, 256, GX_TF_RGB565, GX_FALSE);
+        GX_SetTexCopySrc(0, 0, tex_side, tex_side);
+        GX_SetTexCopyDst(tex_side, tex_side, formats[current_format], GX_FALSE);
         GX_CopyTex(rendered_texture, GX_TRUE);
 
         // 03. load it as a texture
         GXTexObj rendered_texture_obj;
         GX_InitTexObj(
-            &rendered_texture_obj, rendered_texture, 256, 256, GX_TF_RGB565,
-            GX_REPEAT, GX_REPEAT, GX_FALSE
+            &rendered_texture_obj, rendered_texture, tex_side, tex_side,
+            formats[current_format], GX_REPEAT, GX_REPEAT, GX_FALSE
         );
         GX_LoadTexObj(&rendered_texture_obj, GX_TEXMAP0);
 
