@@ -240,11 +240,7 @@ int main(int argc, char** argv) {
         ((rmode->viHeight == 2 * rmode->xfbHeight) ? GX_ENABLE : GX_DISABLE)
     );
 
-    if (rmode->aa) {
-        GX_SetPixelFmt(GX_PF_RGB565_Z16, GX_ZC_LINEAR);
-    } else {
-        GX_SetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
-    }
+    GX_SetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
 
     GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
     GX_SetBlendMode(GX_BM_NONE, GX_BL_SRCALPHA, GX_BL_ONE, GX_LO_SET);
@@ -298,7 +294,15 @@ int main(int argc, char** argv) {
     u8* rendered_texture = aligned_alloc(32, 4 * 256 * 256);
     f32 rquad = 0.0f;
 
-    u8 formats[] = {GX_TF_RGBA8, GX_TF_RGB565, GX_TF_RGB5A3, GX_TF_I8};
+    u8 formats[] = {
+        GX_TF_RGBA8, GX_TF_RGB565, GX_TF_RGB5A3, GX_TF_I8, GX_CTF_Z8M
+    };
+    u8 load_formats[] = {
+        GX_TF_RGBA8, GX_TF_RGB565, GX_TF_RGB5A3, GX_TF_I8, GX_TF_I8
+    };
+
+    u8 format_count = sizeof(formats) / sizeof(formats[0]);
+
     s8 current_format = 0;
     s16 tex_side = 128;
 
@@ -308,13 +312,13 @@ int main(int argc, char** argv) {
         u16 buttons_down = PAD_ButtonsDown(0);
         u16 buttons_held = PAD_ButtonsHeld(0);
         if (buttons_down & PAD_BUTTON_X) {
-            if (++current_format > 3) {
+            if (++current_format >= format_count) {
                 current_format = 0;
             }
         }
         if (buttons_down & PAD_BUTTON_Y) {
             if (current_format-- == 0) {
-                current_format = 3;
+                current_format = format_count;
             }
         }
         if (buttons_held & PAD_BUTTON_A) {
@@ -350,7 +354,7 @@ int main(int argc, char** argv) {
         GXTexObj rendered_texture_obj;
         GX_InitTexObj(
             &rendered_texture_obj, rendered_texture, tex_side, tex_side,
-            formats[current_format], GX_REPEAT, GX_REPEAT, GX_FALSE
+            load_formats[current_format], GX_REPEAT, GX_REPEAT, GX_FALSE
         );
         GX_LoadTexObj(&rendered_texture_obj, GX_TEXMAP0);
 
